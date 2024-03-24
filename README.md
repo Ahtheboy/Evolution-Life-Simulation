@@ -8,7 +8,7 @@ Features:
 - A control slider for the temperature of the climate should be available.
 - Starting conditions should be random. (Maybe start with a species that has randomized alleles)
 - The simulation can be paused and unpaused.
-- A graphic should show a distribution of the allelic distribution for predefined traits.
+- A graphic could show a distribution of the alleles for predefined traits.
 
 Most predefined traits should have an optimum that works in only some situations.
 Predefined traits should be:
