@@ -5,9 +5,14 @@ This is a Javascript simulation of plant competition and simplified evolutionary
 
 Features:
 - A landscape with topography can be generated randomly and modified by clicking and moving around with a brush.
-- A control slider for the temperature of the climate should be available.
 - Starting conditions should be random. (Maybe start with a species that has randomized alleles)
 - The simulation can be paused and unpaused.
+- Clicking on the gray canvas places topography, visible on the black canvas.
+- Occasional mutations. Right now it is only for a tolerance value for higher topography.
+
+Other Originally Planned Features:
+- A control slider for the temperature of the climate should be available.
+- Sexual reproduction
 - A graphic could show a distribution of the alleles for predefined traits.
 
 Most predefined traits should have an optimum that works in only some situations.

@@ -106,7 +106,7 @@ function createPlantGrid()
       }
    }
    
-   const numPoints = 128;//20000;
+   const numPoints = 2048;//20000;
    // Use random noise. Try for only a few plants to begin with.
    // Place some random points
    var randPixelX;
@@ -121,7 +121,7 @@ function createPlantGrid()
       arr[randPixelX][randPixelY] = [1, Math.random(), longevity,
          Math.random(), Math.random(), Math.random(), 0, 0];
       // Colder would cause it to be harder to generate as many propagules.
-      coldToler = -arr[randPixelX][randPixelY][PROPPRESSURE_IND];
+      coldToler = .5 - arr[randPixelX][randPixelY][PROPPRESSURE_IND] / 2;
    }
    return arr;
 }
@@ -349,10 +349,10 @@ function disperseSeedbank(seedbank, compGrid, topoGrid, plantGrid)
             }
             progenyState[AGE_IND] = 0;
             
-            curLikelihood = (2 - compGrid[i][j]) - (topoGrid[i][j] * 10000 * 
-               (1 - plantGrid[i][j][COLDTOLER_IND]));
-            console.log("elev factor for propagules: " + (topoGrid[i][j] *
-               10000 * (1 - plantGrid[i][j][COLDTOLER_IND])));
+            curLikelihood = (2 - compGrid[i][j]) - Math.pow((topoGrid[i][j] -
+               plantGrid[i][j][COLDTOLER_IND]), 2);
+            //console.log("elev factor for propagules: " + (topoGrid[i][j] *
+            //   10000 * (1 - plantGrid[i][j][COLDTOLER_IND])));
             rand = Math.random();
             if (rand < curLikelihood)
             {
@@ -372,6 +372,11 @@ function disperseSeedbank(seedbank, compGrid, topoGrid, plantGrid)
             {
                progenyState[COLDTOLER_IND] += change;
                progenyState[PROPPRESSURE_IND] -= change;
+               //if (progenyState[COLDTOLER_IND] > .4)
+               //{
+               //   console.log("mutation at " + i + " " + j + " to cold tolerance of "
+               //   + progenyState[COLDTOLER_IND]);
+               //}
             }
             
             if (oldSeedCircle == undefined)
@@ -394,12 +399,16 @@ function disperseSeedbank(seedbank, compGrid, topoGrid, plantGrid)
    }
 }
 
-function ageKillPlants(plantGrid)
+function ageKillPlants(plantGrid, topoGrid)
 {
+   // TODO: Make the cold part of a separate climate/stochastic control thing:
+   var randColdThreshold = Math.random();
+   var coldKill;
    for (var i = 0; i < GRIDSIZE; i++)
    {
       for (var j = 0; j < GRIDSIZE; j++)
       {
+         //coldKill = randColdThreshold > plantGrid[i][j][COLDTOLER_IND] - (topoGrid[i][j] / 12);
          // This uses an arbitrary impact from competition for now.
          if (plantGrid[i][j][LIFESPAN_IND] < (plantGrid[i][j][AGE_IND]
             + ((plantGrid[i][j][COMPETSTRESS_IND] - plantGrid[i][j][COMPINTENSITY_IND]) * 4)))
@@ -499,7 +508,7 @@ function runStep()
       //console.log("Spot in compgrid: " + _compGrid[20][20]);
       addNewPlants(iter, _compGrid, _plantGrid);
    }
-   ageKillPlants(_plantGrid);
+   ageKillPlants(_plantGrid, _topoGrid);
    dispPlantGrid(_plantGrid, _ctx);
    
    // At the end:
